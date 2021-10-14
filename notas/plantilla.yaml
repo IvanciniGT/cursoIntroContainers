@@ -1,0 +1,87 @@
+# Admite comentarios ! Aleluya !!!!!
+# Inspirado en PYTHON
+# Un fichero YAML contiene todos los documentos YAML que yo quiera
+# Cada uno va separado del anterior por ---
+---
+# Cada documento es lo que se denomina un NODO
+---
+# Tenemos 2 tipos de nodos: 
+# Escalares: Valores simples:
+17
+#18.8
+---
+True
+#false 
+#FALSE
+#Yes
+#No
+#Off
+#On
+#Y
+#N
+---
+# Texto
+Esto es un texto
+#"Esto es un texto"
+#'Esto es un texto'
+#"17"
+---
+# Dentro de YAML tenemos nodos de coleccion de nodos:
+# Listas:
+- 17
+- "hola"
+- True
+-   - 17
+    - 23
+---
+# Mapas:
+usuario: 
+    nombre: 
+                            primer_nombre:                  Ivan   # Los espacios YAML se los come
+                            apellidos:                      Osuna
+    edad: 43
+    estudios:
+        pocos: True
+        muchos: False
+---
+17
+---
+"hola"
+---
+textos:
+    una linea:
+        - ho'la
+        - "ho'\"  \n \t la"   # El escapado en "" se hace mediante contrabarra
+        - 'ho''la'  # El escapado en '' se hace mediante otra comilla simple... y solo se puede escapar la comilla simple
+    multiples lineas:
+        - En un lugar de la mancha
+        
+          de cuyo nombre no quiero acorarme
+          
+          vivía un hidalgo caballero
+        - # Te voy a dar un texto en multiples lineas, del que no quiero que toques ni una triste coma
+            |
+                En un lugar de la " mancha
+                    de cuyo nombre no ' quiero acorarme
+                vivía un hidalgo # caballero
+                
+                
+                
+                
+                
+        - # Te voy a dar un texto en multiples lineas, por que me es comodo, pero tu juntalo
+            >-
+                Aqui "" empieza otro bloque de texto
+                que sigue'' #  en esta linea
+            # Muy util cuando queramos escribir un comnado de shell
+        - >-
+            docker container create
+                --name mimysql 
+                -v /home/ubuntu/environment/datos/mysql:/var/lib/mysql
+                -e MYSQL_ROOT_PASSWORD=password
+                -e MYSQL_DATABASE=miDB
+                -e MYSQL_USER=usuario 
+                -e MYSQL_PASSWORD=password 
+                -p 3307:3306 
+                mysql:OTRA_VERSION
+        

@@ -1,0 +1,30 @@
+kind:           Pod
+apiVersion:     v1 # Nombre de la libreria/version
+
+metadata:
+    name:       pod-apache  # Identificador del objeto que creo
+    namespace:  default
+    
+spec:
+    containers:
+        - # Contenedor con apache
+            name:   contenedor-apache
+            image:  httpd
+            ports:
+                - containerPort:    80    # Es puramente INFORMACIONAL
+            # volumes:
+            # env:
+
+
+#docker container create --name contenedor-apache httpd
+
+#---
+#version: "3"
+
+#services:
+#    apache:
+#        container_name: contenedor-apache
+#        image: httpd
+
+
+# etcd

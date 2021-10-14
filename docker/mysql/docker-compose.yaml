@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+    mimysql:
+        container_name: mysql
+        volumes:
+            - /home/ubuntu/environment/datos/mysql:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=password
+            - MYSQL_DATABASE=miDB
+            - MYSQL_USER=usuario
+            - MYSQL_PASSWORD=password
+        ports:
+            - 3308:3306
+        image: mysql:latest
