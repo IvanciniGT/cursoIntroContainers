@@ -1,0 +1,112 @@
+# NAMESPACE: miwordpress
+kind:           Namespace
+apiVersion:     v1
+
+metadata:
+    name:       miwordpress
+---
+# Deployment: miwordpress
+#   ->Pod - IP
+#       ->Contenedor
+                # APACHE + PHP + Codigo Wordpress
+                # Como conectar a la BBDD: >>>> IP POD? No se cual es
+kind:           Deployment          # Plantilla de Pod + Numero de replicas
+apiVersion:     apps/v1
+
+metadata:
+    name:       miwordpress
+
+spec:
+    replicas:   1
+    selector:
+        matchLabels:
+            app:    mi-wordpress
+    template:   
+        metadata:
+            name:       pod-miwordpress  # Identificador del objeto que creo
+            labels:
+                app:        mi-wordpress
+        spec:
+            containers:
+                - # Contenedor con wordpress + php + apache
+                    name:   wordpress
+                    image:  wordpress
+                    ports:
+                        - containerPort:    80
+                    env:
+                        - name: WORDPRESS_DB_HOST
+                          value: servicio-bbdd-wordpress  # IP
+                        - name: WORDPRESS_DB_USER
+                          value: miusuario
+                        - name: WORDPRESS_DB_PASSWORD
+                          value: supercontraseña bien dificil
+                        - name: WORDPRESS_DB_NAME
+                          value: miBBDDProduccionWordpress
+---
+# Deployment: bbdd
+kind:           Deployment          # Plantilla de Pod + Numero de replicas
+apiVersion:     apps/v1
+
+metadata:
+    name:       mimysql
+
+spec:
+    replicas:   1
+    selector:
+        matchLabels:
+            app:    el-mysql-de-mi-wordpress
+    template:   
+        metadata:
+            name:       pod-mimysql  # Identificador del objeto que creo
+            labels:
+                app:    el-mysql-de-mi-wordpress # Normalmente pondría mysql
+        spec:
+            containers:
+                - # Contenedor con wordpress + php + apache
+                    name:   mysql
+                    image:  mysql:5.7
+                    ports:
+                        - containerPort:    3306
+                    env:
+                        - name: MYSQL_DATABASE
+                          value: miBBDDProduccionWordpress
+                        - name: MYSQL_USER
+                          value: miusuario
+                        - name: MYSQL_PASSWORD
+                          value: supercontraseña bien dificil
+                        - name: MYSQL_ROOT_PASSWORD
+                          value: password
+---
+# Servicio BBDD: ClusterIP
+#           (fqdn-DNS) IP:PUERTO > PODS
+kind:           Service
+apiVersion:     v1
+
+metadata:
+    name:       servicio-bbdd-wordpress
+
+spec:
+    type:       ClusterIP
+    ports:
+        -       port: 3306
+                targetPort: 3306
+    # Información del / de los pod(s) de destino:
+    selector:
+        app:    el-mysql-de-mi-wordpress  # Busca todos los pods con este label
+---
+# Servicio miwordpress: NodePort / LoadBalancer | Ingress + ClusterIP
+kind:           Service
+apiVersion:     v1
+
+metadata:
+    name:       servicio-wordpress
+
+spec:
+    type:       NodePort
+    ports:
+        -       port:              80
+                targetPort:        80
+                nodePort:       30080
+    # Información del / de los pod(s) de destino:
+    selector:
+        app:    mi-wordpress
