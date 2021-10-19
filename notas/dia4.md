@@ -135,3 +135,93 @@ PodTemplate
 
 
 
+-------------
+Empresa: 
+    - Aplicacion de gestion de nominas:
+        Quien la hace :
+            Desarrollo
+            Quien pide que esta app necesita una BBDD?
+                Desarrollo
+            Quien pide que necesito un apache?
+                Desarrollo
+                
+    - Quien instala eso, segun las spec de desarrollo?
+        SysAdmin <<<< Kubernetes
+        
+        
+    - Quien lo va a hacer ahora?... la instalación: Kubernetes
+    
+    
+    Namespace?
+    
+    Desarrollador: Ivan
+        Deployments
+        Services
+        Statefulsets
+        PersistentVolumeClaim > 10 Gbs, rapidito y rendudante
+    
+    Sysadmin
+        Namespace
+            ResourceQuotas      |
+            LimitRanges         |   Limitacion de recursos en el cluster
+        ConfigMaps
+        Secrets
+        Ingress
+        PersistentVolumes     > 
+            voy a crear un volumen de 10 Gbs rapidito y redundate
+            
+            
+        Kubernetes dira´... mira tu ! si uno pide u nvolumen de 10 Gbs Rapiditoy redundante
+        Y otro ha creado un volumen de 10 Gbs rapidito y redundante
+            Pues se lo enchufo...        
+
+
+
+Metologias agiles:                      Q&A
+    App: 15 dias > Produccion > Pre (7 dias- dia )
+    
+    
+Desarrollador commit > GIT > Jenkins > Despliegue PRODUCCION
+Jefes de proyecto Metodologias Agiles: SCRUM <<<< 
+DEVOPS <<<<<<<<<<<<< AUTOMATIZAR TODO
+Jenkins > 
+    Descargar codigo git
+    compilar codigo
+    lo somete a pruebas unitarias  < si funciona
+    Si se pasan Se pasa por SONARQUBE < Analisis de calidad de codigo
+    ANSIBLE, PUPPET, CHEF
+    Se CREA un entorno de preproduccion .
+    Con contenedores CHUPADO
+        Instalo la app
+        Se hacen pruebas funcionales de alto nivel <<< Q&A  <<<<  PROGRAMAS
+                                                        Selenium
+                                                        Appium
+                                                        SoapUI
+                                                        Postman
+                                Las pruebas se hacen desde LINUX, WINDOWS, MACOS
+                                    Con navegador EDGE
+                                    CHROME
+                                    FIREFOX
+                                    OPERA
+        Y si se superan
+            Se genera un empaquetado de la app que se manda a un REPO DE ARTEFACTOS
+                NEXUS, ARTFACTORY, REPO IMAGEN DE CONTENEDOR DE DOCKER
+        
+        Y despues CREO un entorno de produccion
+            Y ahi instalo la app
+        
+        Y en paralelo registro aquiello donde lo tenga que registrar
+        Mando cooreos a todo perro pichichi
+        
+        Hago unos smoke test
+            Si no... MARCHA ATRAS! y que todo quede como estaba en la version anterior
+
+
+
+El desarrollador me da el serv de aplicaciones <<<< 
+
+SpringBoot <<<<< Microservicios 90%
+
+Framework desarrollo que lleva embedido un TOMCAT
+
+CAIXABANK

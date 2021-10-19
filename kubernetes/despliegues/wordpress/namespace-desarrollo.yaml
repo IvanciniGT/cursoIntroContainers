@@ -1,0 +1,7 @@
+# NAMESPACE: miwordpress
+kind:           Namespace
+apiVersion:     v1
+
+metadata:
+    name:       miwordpress-desarrollo
+---
