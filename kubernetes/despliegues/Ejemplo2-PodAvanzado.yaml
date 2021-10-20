@@ -1,0 +1,157 @@
+
+
+
+
+--- 
+kind:           PersistentVolumeClaim
+apiVersion:     v1
+
+metadata:
+    name:       peticion-volumen-para-mi-pod
+    
+spec:
+    storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
+    resources:
+        requests:
+            storage: 10Gi
+    accessModes:
+        - ReadWriteOnce   # El volumen me los a mi y a nadie mas
+        #- ReadWriteMany   # Que podria ser compartido entra varios PODS
+        #- ReadOnceMany    # Que podria ser compartido entra varios PODS. Solo lectura
+ 
+
+---
+kind:           Pod
+apiVersion:     v1
+
+metadata:
+    name:       pod-pruebas
+    labels:
+        app:    nginx
+    
+spec: 
+   volumes:
+    - name:     volumen1
+      #tipo (donde va a tener la persistencia física)
+      emptyDir:               # Esto genera un directorio en una DESCONOCIDA PARA MI en el HOST 
+                                # Cada vez que se crea el pod.
+                                # UTILIDAD: Compartir archivos entre contenedores de este pod
+            medium: Memory              # Persistencia en Memoria RAM
+            #{}                           Persistencia en disco
+    - name:     volumen2
+      hostPath:               # Esto usa un directorio o archivo de una ruta CONOCIDA en el HOST
+                              # que se mantiene tras borrar el POD. 
+                              # EQUIVALENTE A: Los volumenes que hemos usado en docker
+                              # UTILIDAD: No es igual que en DOCKER. 
+                                  # Porque? ESTOY TRABAJANDO EN UN CLUSTER!!!!
+                                    # Que pasa si el bueno de Kubernetes decide llevar el POD a otro HOST
+                                        # RESULTADO: RUINA !!!!!
+                                        # Pasar datos del HOST al Contenedor
+                                        # Inyectar en el contenedor los ficheros de pid => monitorización
+                                        # Inyectar en el contenedor el fichero /var/lib/docker 
+                                            # Montar lo que se denomina un Docker In Docker
+                                            # Que el contenedor pueda abrir más contenedores 
+                                    # UTILIDAD: ESCASA !!!! En promectos comerciales de monitorización
+            path: /home/ubuntu/environment/datos/kubernetes/volumen
+            type: DirectoryOrCreate
+                    # FileOrCreate 
+                    # File
+                    # Directory 
+    - name: volumen3
+      configMap:                    # FRECUENCIA DE USO: MUCHISSIIIIISIIIIMOOOO !!!!!
+        name: configuracion         # Gener ficheros de texto para cada una de las claves que vengan en un configMap
+                                    # Cuyo contenido será el valor correspondiente en el configMap
+    - name: volumen4
+      configMap:                    # FRECUENCIA DE USO: MUCHISSIIIIISIIIIMOOOO !!!!!
+        name: ficheros              # Gener ficheros de texto para cada una de las claves que vengan en un configMap
+                                    # Cuyo contenido será el valor correspondiente en el configMap
+                                    # UTILIDAD: Inyectar ficheros de configuracion a las aplicaciones
+                                    # Cuyo contenido será el valor correspondiente en el configMap
+#    - name: volumen5
+#      secret:                       # FRECUENCIA DE USO: MUCHISSIIIIISIIIIMOOOO !!!!!
+#       secretName: secretos              # Gener ficheros de texto para cada una de las claves que vengan en un configMap
+                                    # Cuyo contenido será el valor correspondiente en el configMap
+                                    # UTILIDAD: Inyectar Certificados, Claves privadas...., SSH
+   
+   # Me resuelven estos tipos de volumenes mis problemas de persistencia? NO, niguno
+   # Volumenes que me ayudan con el tema de la PERSISTENCIA...
+   # pero, esos donde deben guardar los datos?
+   #    Fuera del host
+   - name: volumen5
+     persistentVolumeClaim:
+        claimName: peticion-volumen-para-mi-pod
+     #nfs:
+     #   server: mi-servidor-nfs
+     #   path: /carpeta/exportada
+        # Esto sería decente?
+            # ESTO ES MUY INNNNNNNNNNNNNDECENTE !!!!
+            # Por que?
+                # Quien monta este documento que estamos montando?
+                # El sysAdmin NO.
+                # El desarollador
+                # Como sysadmin que debo hacer: Configurarlo: 
+                #   A través del CONFIGMAP
+                #   A través del SECRET
+                # En deasarrollo me piden un volumen NFS? NO
+                # Si este fichero podia ir a varios entornos
+                # En todos se usa el mismo tipo de volumen?
+   containers:  
+    - # Contenedor 1: Ubuntu
+        name:       ubuntu
+        image:      ubuntu:latest   # Nunca lo haria en prod
+        command:    ['sh', '-c', 'sleep 3600;']
+        env:
+            - name:     VARIABLE1
+              value:    Valor 1
+            - name:     USUARIO
+              valueFrom:    
+                configMapKeyRef:
+                    name:   configuracion
+                    key:    nombre
+            - name:     PASSWORD
+              valueFrom:    
+                secretKeyRef:
+                    name:   secretos
+                    key:    password
+        volumeMounts:
+            - name:         volumen1
+              mountPath:    /volumen_primero
+            - name:         volumen2
+              mountPath:    /volumen_segundo
+            - name:         volumen3
+              mountPath:    /volumen_tercero
+            - name:         volumen4
+              mountPath:    /volumen_cuarto
+            - name:         volumen5
+              mountPath:    /volumen_quinto
+    - # Contenedor 2: Fedora
+        name:   fedora
+        image:  fedora
+        command:    ['sh', '-c', 'sleep 3600;']
+        envFrom:
+            - configMapRef:
+                name:   configuracion
+            - secretRef:
+                name:   secretos
+        volumeMounts:
+            - name:         volumen1
+              mountPath:    /el-primer-volumen
+    - # Contenedor 3: Nginx
+        name:   nginx
+        image:  nginx
+        ports:
+            - containerPort: 80
+---
+kind:           Service
+apiVersion:     v1
+
+metadata:
+    name:       nginx
+
+spec:
+    type:       ClusterIP
+    ports:
+        -       port:              8080
+                targetPort:        80
+    selector:
+        app:    nginx

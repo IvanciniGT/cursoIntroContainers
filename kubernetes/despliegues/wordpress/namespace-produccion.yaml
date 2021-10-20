@@ -5,3 +5,60 @@ apiVersion:     v1
 metadata:
     name:       miwordpress
 ---
+kind:           ConfigMap
+apiVersion:     v1
+
+metadata:
+    name:       configuracion
+
+data:
+    clave1: Valor Produccion
+    nombre: Ivan Produccion
+---
+kind:           Secret
+apiVersion:     v1
+
+metadata:
+    name:       secretos
+
+data:
+    password:   cHJvZHVjY2lvbg== #base64 cHJvZHVjY2lvbg==
+---
+kind:           ConfigMap
+apiVersion:     v1
+
+metadata:
+    name:       ficheros
+
+data:
+    conf.properties: |
+        # Esto es el contenido de un fichero de configuracion
+        # Este es uin comentario en el fichero
+        
+        # Aqui va la propieda mas importante del mundo mundial
+        PROP=PRODUCCION
+        
+        # AQUI VA OTRA PROPIEDAD MENOS IMPORTANTE
+        propiedad.memos.importante=No valgo na'
+---
+kind:           PersistentVolume
+apiVersion:     v1
+
+metadata:
+    name:       volumen-para-mi-pod
+    
+spec:
+    storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
+    capacity:
+            storage: 20Gi
+    accessModes:
+        - ReadWriteOnce   # El volumen me los a mi y a nadie mas
+        #- ReadWriteMany   # Que podria ser compartido entra varios PODS
+        #- ReadOnceMany    # Que podria ser compartido entra varios PODS. Solo lectura
+ 
+    hostPath:
+        path: /home/ubuntu/environment/datos/kubernetes/pv
+        type: DirectoryOrCreate
+    #nfs:
+    #    server: mi-servidor-nfs
+    #    path: /carpeta/exportada
