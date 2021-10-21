@@ -7,7 +7,7 @@ metadata:
     name:       pvc-mysql
     
 spec:
-    storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
+    #storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
     resources:
         requests:
             storage: 10Gi
@@ -22,7 +22,7 @@ metadata:
     name:       pvc-wordpress
     
 spec:
-    storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
+    #storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
     resources:
         requests:
             storage: 10Gi
