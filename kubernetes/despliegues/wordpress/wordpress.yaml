@@ -1,4 +1,55 @@
+---
 
+kind:           PersistentVolumeClaim
+apiVersion:     v1
+
+metadata:
+    name:       pvc-mysql
+    
+spec:
+    storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
+    resources:
+        requests:
+            storage: 10Gi
+    accessModes:
+        - ReadWriteOnce
+---
+
+kind:           PersistentVolumeClaim
+apiVersion:     v1
+
+metadata:
+    name:       pvc-wordpress
+    
+spec:
+    storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
+    resources:
+        requests:
+            storage: 10Gi
+    accessModes:
+        - ReadWriteOnce
+---
+kind:               ConfigMap
+apiVersion:         v1
+
+metadata:
+    name:           configuracion
+
+data:
+    MYSQL_DATABASE: miBBDDProduccionWordpress
+    
+---
+kind:                       Secret
+apiVersion:                 v1
+
+metadata:
+    name:                   secretos
+
+data:
+    MYSQL_USER:             bWl1c3Vhcmlv
+    MYSQL_PASSWORD:         c3VwZXJjb250cmFzZcOxYSBiaWVuIGRpZmljaWw=
+    MYSQL_ROOT_PASSWORD:    cGFzc3dvcmQ=
+---
 # Deployment: miwordpress
 #   ->Pod - IP
 #       ->Contenedor
@@ -21,21 +72,37 @@ spec:
             labels:
                 app:        mi-wordpress
         spec:
+            volumes:
+                - name: datos-wordpress
+                  persistentVolumeClaim:
+                    claimName: pvc-wordpress
             containers:
                 - # Contenedor con wordpress + php + apache
                     name:   wordpress
                     image:  wordpress
                     ports:
                         - containerPort:    80
+                    volumeMounts:
+                        - name: datos-wordpress
+                          mountPath: /var/www/html
                     env:
                         - name: WORDPRESS_DB_HOST
                           value: servicio-bbdd-wordpress  # IP
                         - name: WORDPRESS_DB_USER
-                          value: miusuario
+                          valueFrom:
+                            secretKeyRef:
+                                name:   secretos
+                                key:    MYSQL_USER
                         - name: WORDPRESS_DB_PASSWORD
-                          value: supercontraseña bien dificil
+                          valueFrom:
+                            secretKeyRef:
+                                name:   secretos
+                                key:    MYSQL_PASSWORD
                         - name: WORDPRESS_DB_NAME
-                          value: miBBDDProduccionWordpress
+                          valueFrom:
+                            configMapKeyRef:
+                                name:   configuracion
+                                key:    MYSQL_DATABASE
 ---
 # Deployment: bbdd
 kind:           Deployment          # Plantilla de Pod + Numero de replicas
@@ -55,21 +122,24 @@ spec:
             labels:
                 app:    el-mysql-de-mi-wordpress # Normalmente pondría mysql
         spec:
+            volumes:
+                - name: datos-mysql
+                  persistentVolumeClaim:
+                    claimName: pvc-mysql
             containers:
                 - # Contenedor con wordpress + php + apache
                     name:   mysql
                     image:  mysql:5.7
+                    volumeMounts:
+                        - name: datos-mysql
+                          mountPath: /var/lib/mysql
                     ports:
                         - containerPort:    3306
-                    env:
-                        - name: MYSQL_DATABASE
-                          value: miBBDDProduccionWordpress
-                        - name: MYSQL_USER
-                          value: miusuario
-                        - name: MYSQL_PASSWORD
-                          value: supercontraseña bien dificil
-                        - name: MYSQL_ROOT_PASSWORD
-                          value: password
+                    envFrom:
+                        - configMapRef:
+                            name:   configuracion
+                        - secretRef:
+                            name:   secretos
 ---
 # Servicio BBDD: ClusterIP
 #           (fqdn-DNS) IP:PUERTO > PODS

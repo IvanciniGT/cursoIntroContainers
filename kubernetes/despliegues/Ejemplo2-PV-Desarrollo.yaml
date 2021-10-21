@@ -4,7 +4,7 @@ apiVersion:     v1
 
 metadata:
     name:       volumen-para-mi-pod
-    
+
 spec:
     storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
     capacity:
