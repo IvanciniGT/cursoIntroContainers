@@ -77,7 +77,7 @@ spec:
    # Volumenes que me ayudan con el tema de la PERSISTENCIA...
    # pero, esos donde deben guardar los datos?
    #    Fuera del host
-   - name: volumen5
+    - name: volumen5
      persistentVolumeClaim:
         claimName: peticion-volumen-para-mi-pod
      #nfs:

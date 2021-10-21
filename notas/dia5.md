@@ -161,3 +161,38 @@ Nodo 2 Cluster
 
 Servidor NFS
     /exp/ruta1
+
+Dato1, DAto2
+
+
+
+BALANCEADOR 
+Query 4 sitios de donde leer
+
+
+Servicio
+Balanceador -> Nodo1 -> Dato2 -> Nodo3
+
+
+Nodo 1
+        Dato1       Dato3   
+Nodo 2
+        Dato1       Dato3  
+        
+Nodo 3
+        Dato2       Dato4   
+Nodo 4
+        Dato2       Dato4
+
+Hasta que no grabo en las 4 no se por bueno... sigo limitado
+
+
+StatefulSet
+    Kafka
+    MariaDB
+    MySQL
+    Oracle
+    ES
+    
+    
+    TAINT MNTO NODOS TODOS
