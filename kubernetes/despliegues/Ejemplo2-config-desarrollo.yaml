@@ -3,7 +3,7 @@ kind:           Namespace
 apiVersion:     v1
 
 metadata:
-    name:       miwordpress
+    name:       desarrollo
 ---
 kind:           ConfigMap
 apiVersion:     v1
@@ -12,8 +12,8 @@ metadata:
     name:       configuracion
 
 data:
-    clave1: Valor Produccion
-    nombre: Ivan Produccion
+    clave1: Valor Desarrollo
+    nombre: Ivan Desarrollo
 ---
 kind:           Secret
 apiVersion:     v1
@@ -22,7 +22,7 @@ metadata:
     name:       secretos
 
 data:
-    password:   cHJvZHVjY2lvbg== #base64 cHJvZHVjY2lvbg==
+    password:   ZGVzYXJyb2xsbw==
 ---
 kind:           ConfigMap
 apiVersion:     v1
@@ -36,7 +36,7 @@ data:
         # Este es uin comentario en el fichero
         
         # Aqui va la propieda mas importante del mundo mundial
-        PROP=PRODUCCION
+        PROP=DESARROLLO
         
         # AQUI VA OTRA PROPIEDAD MENOS IMPORTANTE
         propiedad.memos.importante=No valgo na'

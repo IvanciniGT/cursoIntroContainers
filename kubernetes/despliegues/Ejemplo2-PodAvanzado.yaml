@@ -146,7 +146,7 @@ kind:           Service
 apiVersion:     v1
 
 metadata:
-    name:       nginx
+    name:       nginx   # nginx.default      nginx.produccion
 
 spec:
     type:       ClusterIP

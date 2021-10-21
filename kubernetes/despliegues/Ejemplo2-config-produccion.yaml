@@ -3,7 +3,7 @@ kind:           Namespace
 apiVersion:     v1
 
 metadata:
-    name:       miwordpress
+    name:       produccion
 ---
 kind:           ConfigMap
 apiVersion:     v1

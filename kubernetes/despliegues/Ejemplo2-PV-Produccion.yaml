@@ -1,0 +1,22 @@
+---
+kind:           PersistentVolume
+apiVersion:     v1
+
+metadata:
+    name:       volumen-para-mi-pod-2
+    
+spec:
+    storageClassName: rapidito-redundante   # Esta info me la suministra el SYSADMIN
+    capacity:
+            storage: 20Gi
+    accessModes:
+        - ReadWriteOnce   # El volumen me los a mi y a nadie mas
+        #- ReadWriteMany   # Que podria ser compartido entra varios PODS
+        #- ReadOnceMany    # Que podria ser compartido entra varios PODS. Solo lectura
+ 
+    hostPath:
+        path: /home/ubuntu/environment/datos/kubernetes/pv
+        type: DirectoryOrCreate
+    #nfs:
+    #    server: mi-servidor-nfs
+    #    path: /carpeta/exportada
