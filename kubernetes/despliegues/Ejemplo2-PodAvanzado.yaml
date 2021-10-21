@@ -78,7 +78,7 @@ spec:
    # pero, esos donde deben guardar los datos?
    #    Fuera del host
     - name: volumen5
-     persistentVolumeClaim:
+      persistentVolumeClaim:
         claimName: peticion-volumen-para-mi-pod
      #nfs:
      #   server: mi-servidor-nfs
